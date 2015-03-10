@@ -1,0 +1,25 @@
+{
+  "name": "alcatraz/kernel",
+  "description": "Kernel Alcatraz Framework.",
+  "authors": [
+    {
+      "name": "Gabriel Malaquias",
+      "email": "g@gmalaquias.com"
+    }
+  ],
+  "keywords": ["framework", "alcatraz", "kernel"],
+  "license": "MIT",
+  "type": "library",
+    "autoload": {
+        "psr-0": {
+            { "Alcatraz\\": "" }
+        }
+    },
+	"target-dir": "Alcatraz",
+    "require": {
+      
+    },
+    "config": {
+      "preferred-install": "dist"
+    }
+}
