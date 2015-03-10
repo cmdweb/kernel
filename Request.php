@@ -6,7 +6,7 @@
  * @author Gabriel Malaquias
  * @access public
  */
-namespace Mvc;
+namespace Alcatraz;
 
 class Request
 {
