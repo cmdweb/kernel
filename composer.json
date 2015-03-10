@@ -10,10 +10,8 @@
   "keywords": ["framework", "alcatraz", "kernel"],
   "license": "MIT",
   "type": "library",
-    "autoload": {
-        "psr-0": {
-            { "Alcatraz\\": "" }
-        }
+   "autoload": {
+        "psr-0": { "Alcatraz\\": "" }
     },
 	"target-dir": "Alcatraz",
     "require": {
