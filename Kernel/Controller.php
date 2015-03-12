@@ -7,7 +7,7 @@
  */
 
 namespace Alcatraz\Kernel;
-use Components\Session;
+use Session\Session;
 
 /**
  * Class Controller

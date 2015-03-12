@@ -15,6 +15,7 @@
     },
 	"target-dir": "Alcatraz",
     "require": {
-      "alcatraz/config": "1.0.0"
+      "alcatraz/config": "1.0.0",
+      "alcatraz/session": "1.0.0"
     }
 }

@@ -9,7 +9,7 @@
 
 namespace Alcatraz\Kernel;
 use Components\ModelState;
-use Components\Session;
+use Session\Session;
 
 /**
  * Class Router
