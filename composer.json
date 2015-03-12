@@ -16,8 +16,5 @@
 	"target-dir": "Alcatraz",
     "require": {
       "alcatraz/config": "dev-master"
-    },
-    "config": {
-      "preferred-install": "dist"
     }
 }
