@@ -15,6 +15,6 @@
     },
 	"target-dir": "Alcatraz",
     "require": {
-      "phpmailer/phpmailer": "5.2.9"
+      "alcatraz/config": "dev-master"
     }
 }
