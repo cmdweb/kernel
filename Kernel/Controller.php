@@ -20,7 +20,7 @@ class Controller
      * metodo chamado sempre antes de exibir as paginas
      */
     function __construct(){
-
+        //Funcões de Restrições podem ser colocadas aqui
     }
 
     /**
