@@ -39,3 +39,10 @@ CONTROLLER_404
 ACTION_404
 
 PREFIX_POST
+
+"require": {
+      //"alcatraz/config": "dev-master",
+//      "alcatraz/session": "dev-master",
+//      "alcatraz/modelstate": "dev-master",
+//      "alcatraz/stringhelper": "dev-master"
+    },

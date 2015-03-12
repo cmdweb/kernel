@@ -14,7 +14,9 @@
         "psr-0": { "Alcatraz\\": "" }
     },
 	"target-dir": "Alcatraz",
-
+    "require": {
+      "alcatraz/config": "dev-master"
+    },
     "config": {
       "preferred-install": "dist"
     }
