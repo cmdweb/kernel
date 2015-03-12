@@ -15,6 +15,6 @@
     },
 	"target-dir": "Alcatraz",
     "require": {
-      "alcatraz/config": "dev-master"
+      "alcatraz/config": "1.0.0"
     }
 }
