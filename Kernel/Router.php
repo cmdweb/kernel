@@ -8,7 +8,7 @@
  */
 
 namespace Alcatraz\Kernel;
-use Components\ModelState;
+use ModelState\ModelState;
 use Session\Session;
 
 /**
