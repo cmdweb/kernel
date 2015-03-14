@@ -26,8 +26,6 @@ class Request
         self::$_action = ($m = array_shift($segmentos)) ? $m : DEFAULT_VIEW;
 
         self::$_args = (count($segmentos) > 0) ? $segmentos : array();
-
-
     }
 
     public static function InverseArea(){
