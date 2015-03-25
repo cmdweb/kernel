@@ -84,10 +84,8 @@ class Router
         call_user_func_array(array($controlador, $action . $post), $args);
 
         $content = ob_get_clean();
-
-
-        echo $content;
-        //Layout::render($content);
+        
+        Layout::render($content);
     }
 
     /**
