@@ -8,7 +8,7 @@
  */
 namespace Alcatraz\Kernel;
 
-use ModelState\ModelState;
+use Alcatraz\ModelState\ModelState;
 use \PDO;
 
 class Database extends PDO

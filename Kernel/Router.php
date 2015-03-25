@@ -8,7 +8,7 @@
  */
 
 namespace Alcatraz\Kernel;
-#use ModelState\ModelState;
+use Alcatraz\ModelState\ModelState;
 
 /**
  * Class Router
@@ -147,7 +147,7 @@ class Router
                 }
             }
 
-            //ModelState::TryValidationModel($model);
+            ModelState::TryValidationModel($model);
 
             $parameters = array_merge($arrayMerge,$parameters);
         }
