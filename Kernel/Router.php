@@ -8,8 +8,7 @@
  */
 
 namespace Alcatraz\Kernel;
-use ModelState\ModelState;
-use Session\Session;
+#use ModelState\ModelState;
 
 /**
  * Class Router
@@ -17,6 +16,10 @@ use Session\Session;
  */
 class Router
 {
+    CONST ERROR_CONTROLLER = "ErrorsController";
+    CONST ERROR_404 = "Erro404";
+    CONST ERROR_500 = "Erro500";
+
     /**
      * Método responsável por obter o nome do controlador e do método e executá-los.
      * @access public
@@ -27,7 +30,6 @@ class Router
         ob_start();
         //pega o controller na URL
         Request::run();
-        Session::start();
 
         $controller = Request::getCompleteController();
 
@@ -46,7 +48,7 @@ class Router
             $post = self::VerificaMetodo($controlador,$action);
 
         } else {
-            
+            //inverte classe Request para procurar por area
             Request::InverseArea();
             $area = Request::getArea();
             $controller = Request::getCompleteController();
@@ -62,14 +64,15 @@ class Router
                 $args = (array)Request::getArgs();
 
                 $post = self::VerificaMetodo($controlador, $action);
-            }else if(file_exists(PATH_CONTROLLER . CONTROLLER_404 . '.php')){
-                Request::setController(CONTROLLER_404);
-                Request::setAction(ACTION_404);
+            }else if(file_exists(PATH_CONTROLLER . self::ERROR_CONTROLLER . '.php')){
+                //adciona tela de erro
+                Request::setController(self::ERROR_CONTROLLER);
+                Request::setAction(self::ERROR_404);
                 Request::setArea(null);
 
-                $controlador = NAMESPACE_CONTROLLER . '\\' . CONTROLLER_404;
+                $controlador = NAMESPACE_CONTROLLER . '\\' . self::ERROR_CONTROLLER;
                 $controlador = new $controlador();
-                $action = ACTION_404;
+                $action = self::ERROR_404;
                 //Transforma o resto da URL em Array
                 $args = (array)Request::getArgs();
                 $post = self::VerificaMetodo($controlador, $action);
@@ -78,16 +81,13 @@ class Router
 
         self::getPost($args);
 
-//        try {
-            call_user_func_array(array($controlador, $action . $post), $args);
-//        }catch (\Exception $e){
-//            echo $e->getMessage();
-//        }
+        call_user_func_array(array($controlador, $action . $post), $args);
 
         $content = ob_get_clean();
 
 
-        Layout::render($content);
+        echo $content;
+        //Layout::render($content);
     }
 
     /**
@@ -99,10 +99,8 @@ class Router
     public static function VerificaMetodo($controller, $action)
     {
         if (!isset($_POST) OR count($_POST) == 0) {
-            if (!method_exists($controller, $action)) {
-                Url::RedirectTo(ACTION_404,CONTROLLER_404);
-                exit();
-            }
+            if (!method_exists($controller, $action))
+                Url::RedirectTo(self::ERROR_404,self::ERROR_CONTROLLER);
 
             return null;
         }
@@ -110,23 +108,12 @@ class Router
         $addPost = PREFIX_POST;
         if(!method_exists($controller, $action.$addPost)) {
             $addPost = null;
-            if (!method_exists($controller, $action)) {
-               Url::RedirectTo(ACTION_404,CONTROLLER_404);
-            }
+            if (!method_exists($controller, $action))
+               Url::RedirectTo(self::ERROR_404,self::ERROR_CONTROLLER);
         }
 
         return $addPost;
     }
-
-    /**
-     * @param $msg
-     * @throws \Exception
-     */
-    private static function error($msg)
-    {
-        throw new MvcException($msg);
-    }
-
 
     /**
     * Caso exista algum post na pagina, ele é tranformado em um objeto $model
@@ -160,7 +147,7 @@ class Router
                 }
             }
 
-            ModelState::TryValidationModel($model);
+            //ModelState::TryValidationModel($model);
 
             $parameters = array_merge($arrayMerge,$parameters);
         }

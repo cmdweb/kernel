@@ -1,9 +1,9 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: Gabriel
- * Date: 23/01/2015
- * Time: 21:22
+ * Responsavl pelo controle de formularios e html em geral
+ *
+ * @author Gabriel Malaquias
+ * @access public
  */
 
 namespace Alcatraz\Kernel;
@@ -12,6 +12,9 @@ use ModelState\ModelState;
 
 class Html
 {
+    /**
+     * <input type="text" name="$name" value="$value" attr="$attr" />
+     */
     static function text($name, $value, $attr = array())
     {
         $attr = array_merge(
@@ -24,6 +27,9 @@ class Html
         self::input($name, $value, $attr);
     }
 
+    /**
+     * <input type="password" name="$name" value="$value" attr="$attr" />
+     */
     static function password($name, $value, $attr = array())
     {
         $attr = array_merge(
@@ -37,6 +43,7 @@ class Html
     }
 
     /**
+     * Cria um select Html
      * @param $name - Nome do campo
      * @param array $values - array com os objetos com os valores
      * @param $val - campo do objeto que contem o dado que deve ser o value do option
@@ -65,26 +72,9 @@ class Html
         echo $html;
     }
 
-
-    private static function getAttributes($attr)
-    {
-        $html = "";
-        foreach ($attr as $key => $value) {
-            $html .= $key . '="' . $value . '" ';
-        }
-
-        return $html;
-    }
-
-    private static function input($name, $value, $attr = array())
-    {
-        $html = '<input ';
-        $attr = array_merge(array("value" => $value, "name" => $name), $attr);
-        $html .= self::getAttributes($attr);
-        $html .= " />";
-        echo $html;
-    }
-
+    /**
+     * ValidateSumary - Exibe os erros do modelstate na tela
+     */
     static function ValidateSummary()
     {
         $erros = ModelState::getErrors();
@@ -101,6 +91,9 @@ class Html
         endif;
     }
 
+    /**
+     * <input type="checkbox" name="$name" value="$value" attr="$attr" />
+     */
     static function checkBox($name, $bit, $attr = array(), $val = true)
     {
         if ($bit == "true")
@@ -116,6 +109,9 @@ class Html
         self::input($name, $val, $attr);
     }
 
+    /**
+     * <input type="radio" name="$name" value="$value" attr="$attr" />
+     */
     static function radioButton($name, $selectValue, $value, $attr = array())
     {
         if ($selectValue == $value)
@@ -131,6 +127,9 @@ class Html
         self::input($name, $value, $attr);
     }
 
+    /**
+     * <input type="hidden" name="$name" value="$value" attr="$attr" />
+     */
     static function hidden($name, $value, $attr = array())
     {
         $attr = array_merge(
@@ -151,6 +150,9 @@ class Html
         echo nl2br(stripslashes($value));
     }
 
+    /**
+     * <textarea name="$name" attr="$attr">$value</textarea>
+     */
     static function textArea($name, $value, $attr = array())
     {
         $html = "<textarea ";
@@ -168,6 +170,9 @@ class Html
         echo $html;
     }
 
+    /**
+     * <input type="file" name="$name" value="$value" attr="$attr" />
+     */
     static function file($name, $value, $attr = array())
     {
         $attr = array_merge(
@@ -178,5 +183,30 @@ class Html
         );
 
         self::input($name, $value, $attr);
+    }
+
+    /**
+     * Pega os atributos
+     */
+    private static function getAttributes($attr)
+    {
+        $html = "";
+        foreach ($attr as $key => $value) {
+            $html .= $key . '="' . $value . '" ';
+        }
+
+        return $html;
+    }
+
+    /**
+     * Cria os inputs
+     */
+    private static function input($name, $value, $attr = array())
+    {
+        $html = '<input ';
+        $attr = array_merge(array("value" => $value, "name" => $name), $attr);
+        $html .= self::getAttributes($attr);
+        $html .= " />";
+        echo $html;
     }
 }

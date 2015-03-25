@@ -18,7 +18,6 @@ class Database extends PDO
      * @access public
      * @return void
      */
-
     public function __construct($DB_TYPE = DB_TYPE, $DB_HOST = DB_HOST, $DB_NAME = DB_NAME, $DB_USER = DB_USER, $DB_PASS = DB_PASS)
     {
         $options = array(
@@ -34,6 +33,14 @@ class Database extends PDO
         }
     }
 
+    /**
+     * Executa um select no banco
+     * @param $sql - query
+     * @param string $class - Classe de retorno
+     * @param bool $all - Se quando retornar apenas um resultado vai voltar em um array ou um objeto unico (true = objeto)
+     * @param array $array - Paramentos do PDO
+     * @return array|mixed|null
+     */
     public function select($sql, $class = "", $all = FALSE, $array = array())
     {
         // Prepara a Query
@@ -78,12 +85,23 @@ class Database extends PDO
 
     }
 
+    /**
+     * Pega o nome da classe
+     * @param $class
+     * @return string
+     */
     function getClass($class){
         if(is_object($class))
             return get_class($class);
         return $class;
     }
 
+    /**
+     * Executa um INSERT no banco
+     * @param $table - Noma da Tabela
+     * @param $data - Array com os dados do insert
+     * @return string - id inserido no banco
+     */
     public function ExecuteInsert($table, $data)
     {
             if (is_object($data))
@@ -117,6 +135,13 @@ class Database extends PDO
             return $this->lastInsertId();
     }
 
+    /**
+     * Executa com UPDATE no banco
+     * @param $table - Nome da Tabela
+     * @param $data - Dados que vão ser atualizados
+     * @param $where - WHERE da query do update
+     * @return bool - Sucesso ou falha
+     */
     public function ExecuteUpdate($table, $data, $where)
     {
         if (is_object($data))
@@ -151,6 +176,13 @@ class Database extends PDO
         return $sth->execute();
     }
 
+    /**
+     * Executa um delete no BD
+     * @param $table - Nome da Tabela
+     * @param $where - WHERE do DELETE
+     * @param int $limit - LIMIT que pode ser deletado
+     * @return int
+     */
     public function deleteExecute($table, $where, $limit = 1)
     {
         // Deleta

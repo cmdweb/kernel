@@ -1,9 +1,6 @@
 <?php
 
 /**
- * Layout short summary.
- *
- * Layout description.
  *
  * @version 1.0
  * @author Gabriel

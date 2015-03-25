@@ -1,9 +1,9 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: Gabriel
- * Date: 23/11/2014
- * Time: 21:49
+ * Classe que gerencia outros controladores
+ *
+ * @author Gabriel Malaquias
+ * @access public
  */
 
 namespace Alcatraz\Kernel;
@@ -105,7 +105,6 @@ class Controller
 
         //dentro das areas
         return NAMESPACE_AREAS . '\\' . Request::getArea() . '\\' . 'Models' . '\\' . Request::getController();
-
     }
 
     #region .: Layout :.

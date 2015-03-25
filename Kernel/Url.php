@@ -1,15 +1,12 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: Gabriel
- * Date: 23/01/2015
- * Time: 22:19
+ * Classe para gerenciamento da URL
+ *
+ * @author Gabriel Malaquias
+ * @access public
  */
-
 namespace Alcatraz\Kernel;
 
-
-use Components\StringHelper;
 
 class Url {
 
