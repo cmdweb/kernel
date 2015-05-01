@@ -20,6 +20,8 @@ class Router
     CONST ERROR_404 = "Erro404";
     CONST ERROR_500 = "Erro500";
 
+    public static $controller;
+
     /**
      * Método responsável por obter o nome do controlador e do método e executá-los.
      * @access public
@@ -81,10 +83,12 @@ class Router
 
         self::getPost($args);
 
+        self::$controller = get_class($controlador);
+
         call_user_func_array(array($controlador, $action . $post), $args);
 
         $content = ob_get_clean();
-        
+
         Layout::render($content);
     }
 
@@ -107,16 +111,16 @@ class Router
         if(!method_exists($controller, $action.$addPost)) {
             $addPost = null;
             if (!method_exists($controller, $action))
-               Url::RedirectTo(self::ERROR_404,self::ERROR_CONTROLLER);
+                Url::RedirectTo(self::ERROR_404,self::ERROR_CONTROLLER);
         }
 
         return $addPost;
     }
 
     /**
-    * Caso exista algum post na pagina, ele é tranformado em um objeto $model
-    * e colocado como o primeiro argumento para receber no metodo do controller
-    */
+     * Caso exista algum post na pagina, ele é tranformado em um objeto $model
+     * e colocado como o primeiro argumento para receber no metodo do controller
+     */
     private static function  getPost(&$parameters){
         if(isset($_POST) and count($_POST) > 0){
             $post = $_POST;
@@ -138,10 +142,10 @@ class Router
 
             if(isset($_FILES)) {
                 foreach ($_FILES as $file => $args) {
-                   if(property_exists($model,$file))
-                       $model->$file = $args;
-                   else
-                       $arrayMerge[$file] = $args;
+                    if(property_exists($model,$file))
+                        $model->$file = $args;
+                    else
+                        $arrayMerge[$file] = $args;
                 }
             }
 

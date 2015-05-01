@@ -11,12 +11,14 @@
   "license": "MIT",
   "type": "library",
    "autoload": {
-        "psr-0": { "Alcatraz\\": "" }
+        "psr-0": {
+          "Alcatraz\\": ""
+        }
     },
 	"target-dir": "Alcatraz",
     "require": {
       "alcatraz/config": "1.0.0",
-      "alcatraz/session": "1.0.0",
+      "alcatraz/session": "1.0.1",
       "alcatraz/modelstate": "1.0.0"
     }
 }
