@@ -31,6 +31,7 @@ class Router
     public static function run()
     {
         ob_start();
+
         //pega o controller na URL
         Request::run();
 
@@ -38,19 +39,10 @@ class Router
 
         //verifica se o controlador existe
         if (file_exists(PATH_CONTROLLER . $controller . '.php')) {
-
-            //instancia o controlador
             self::$controller = NAMESPACE_CONTROLLER . "\\" .$controller;
-
-            $controlador = new  self::$controller();
 
             //pega o metodo da URL
             $action = Request::getAction();
-            //Transforma o resto da URL em Array
-            $args = (array)Request::getArgs();
-
-            //verifica se o metodo existe no controlador
-            $post = self::VerificaMetodo($controlador,$action);
 
         } else {
             //inverte classe Request para procurar por area
@@ -59,16 +51,11 @@ class Router
             $controller = Request::getCompleteController();
 
             if (file_exists(PATH_AREA . $area . DS . 'Controllers' . DS . $controller . '.php')) {
-                //instancia o controlador
                 self::$controller = NAMESPACE_AREAS . "\\" . $area . "\\Controllers\\" . $controller;
-                $controlador = new  self::$controller();
 
                 //pega o metodo da URL
                 $action = Request::getAction();
-                //Transforma o resto da URL em Array
-                $args = (array)Request::getArgs();
 
-                $post = self::VerificaMetodo($controlador, $action);
             }else if(file_exists(PATH_CONTROLLER . self::ERROR_CONTROLLER . '.php')){
                 //adciona tela de erro
                 Request::setController(self::ERROR_CONTROLLER);
@@ -76,20 +63,31 @@ class Router
                 Request::setArea(null);
 
                 self::$controller = NAMESPACE_CONTROLLER . '\\' . self::ERROR_CONTROLLER;
-                $controlador = new self::$controller();
+
                 $action = self::ERROR_404;
-                //Transforma o resto da URL em Array
-                $args = (array)Request::getArgs();
-                $post = self::VerificaMetodo($controlador, $action);
+
             }
         }
 
+        //instancia o controlador
+        $controlador = new self::$controller();
+
+        //verifica o se existe o metodo no controller
+        $post = self::VerificaMetodo($controlador, $action);
+
+        //Transforma o resto da URL em Array
+        $args = (array)Request::getArgs();
+
+        //pega parametros do post
         self::getPost($args);
 
+        //chama o metodo dentro do controller
         call_user_func_array(array($controlador, $action . $post), $args);
 
+        //pega o buffer
         $content = ob_get_clean();
 
+        //renderiza o layout
         Layout::render($content);
     }
 
