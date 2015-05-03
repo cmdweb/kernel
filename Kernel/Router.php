@@ -16,7 +16,8 @@ use Alcatraz\ModelState\ModelState;
  */
 class Router
 {
-    CONST ERROR_CONTROLLER = "ErrorsController";
+    CONST ERROR_CONTROLLER = "ErrosController";
+    CONST ERROR_CONTROLLER_ABV = "Erros";
     CONST ERROR_404 = "Erro404";
     CONST ERROR_500 = "Erro500";
 
@@ -37,8 +38,10 @@ class Router
 
         //verifica se o controlador existe
         if (file_exists(PATH_CONTROLLER . $controller . '.php')) {
+
             //instancia o controlador
             self::$controller = NAMESPACE_CONTROLLER . "\\" .$controller;
+
             $controlador = new  self::$controller();
 
             //pega o metodo da URL
@@ -73,7 +76,7 @@ class Router
                 Request::setArea(null);
 
                 self::$controller = NAMESPACE_CONTROLLER . '\\' . self::ERROR_CONTROLLER;
-                $controlador = new  self::$controller();
+                $controlador = new self::$controller();
                 $action = self::ERROR_404;
                 //Transforma o resto da URL em Array
                 $args = (array)Request::getArgs();
@@ -100,7 +103,7 @@ class Router
     {
         if (!isset($_POST) OR count($_POST) == 0) {
             if (!method_exists($controller, $action))
-                Url::RedirectTo(self::ERROR_404,self::ERROR_CONTROLLER);
+                Url::RedirectTo(self::ERROR_404,self::ERROR_CONTROLLER_ABV);
 
             return null;
         }
@@ -109,7 +112,7 @@ class Router
         if(!method_exists($controller, $action.$addPost)) {
             $addPost = null;
             if (!method_exists($controller, $action))
-                Url::RedirectTo(self::ERROR_404,self::ERROR_CONTROLLER);
+                Url::RedirectTo(self::ERROR_404,self::ERROR_CONTROLLER_ABV);
         }
 
         return $addPost;
