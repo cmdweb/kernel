@@ -38,8 +38,8 @@ class Router
         //verifica se o controlador existe
         if (file_exists(PATH_CONTROLLER . $controller . '.php')) {
             //instancia o controlador
-            $controlador = NAMESPACE_CONTROLLER . "\\" .$controller;
-            $controlador = new $controlador();
+            self::$controller = NAMESPACE_CONTROLLER . "\\" .$controller;
+            $controlador = new  self::$controller();
 
             //pega o metodo da URL
             $action = Request::getAction();
@@ -57,8 +57,8 @@ class Router
 
             if (file_exists(PATH_AREA . $area . DS . 'Controllers' . DS . $controller . '.php')) {
                 //instancia o controlador
-                $controlador = NAMESPACE_AREAS . "\\" . $area . "\\Controllers\\" . $controller;
-                $controlador = new $controlador();
+                self::$controller = NAMESPACE_AREAS . "\\" . $area . "\\Controllers\\" . $controller;
+                $controlador = new  self::$controller();
 
                 //pega o metodo da URL
                 $action = Request::getAction();
@@ -72,8 +72,8 @@ class Router
                 Request::setAction(self::ERROR_404);
                 Request::setArea(null);
 
-                $controlador = NAMESPACE_CONTROLLER . '\\' . self::ERROR_CONTROLLER;
-                $controlador = new $controlador();
+                self::$controller = NAMESPACE_CONTROLLER . '\\' . self::ERROR_CONTROLLER;
+                $controlador = new  self::$controller();
                 $action = self::ERROR_404;
                 //Transforma o resto da URL em Array
                 $args = (array)Request::getArgs();
@@ -82,8 +82,6 @@ class Router
         }
 
         self::getPost($args);
-
-        self::$controller = get_class($controlador);
 
         call_user_func_array(array($controlador, $action . $post), $args);
 
