@@ -96,7 +96,7 @@ class Html
      */
     static function checkBox($name, $bit, $attr = array(), $val = true)
     {
-        if ($bit == "true")
+        if ($bit == "true" || $bit == 1)
             $attr["checked"] = "true";
 
         $attr = array_merge(
