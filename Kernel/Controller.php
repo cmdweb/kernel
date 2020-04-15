@@ -21,7 +21,7 @@ class Controller
      * metodo chamado sempre antes de exibir as paginas
      */
     function __construct(){
-        if(!defined("ENABLE_SECURITY"))
+        if(!defined("ENABLE_SECURITY") || ENABLE_SECURITY === false)
             return;
 
         if (!Security::verifySession())
