@@ -8,6 +8,7 @@
  */
 
 namespace Alcatraz\Kernel;
+
 use Alcatraz\ModelState\ModelState;
 
 /**
@@ -39,7 +40,7 @@ class Router
 
         //verifica se o controlador existe
         if (file_exists(PATH_CONTROLLER . $controller . '.php')) {
-            self::$controller = NAMESPACE_CONTROLLER . "\\" .$controller;
+            self::$controller = NAMESPACE_CONTROLLER . "\\" . $controller;
 
             //pega o metodo da URL
             $action = Request::getAction();
@@ -56,7 +57,7 @@ class Router
                 //pega o metodo da URL
                 $action = Request::getAction();
 
-            }else if(file_exists(PATH_CONTROLLER . self::ERROR_CONTROLLER . '.php')){
+            } else if (file_exists(PATH_CONTROLLER . self::ERROR_CONTROLLER . '.php')) {
                 //adciona tela de erro
                 Request::setController(self::ERROR_CONTROLLER);
                 Request::setAction(self::ERROR_404);
@@ -69,11 +70,11 @@ class Router
             }
         }
 
+        //verifica o se existe o metodo no controller
+        $post = self::VerificaMetodo(self::$controller, $action);
+
         //instancia o controlador
         $controlador = new self::$controller();
-
-        //verifica o se existe o metodo no controller
-        $post = self::VerificaMetodo($controlador, $action);
 
         //Transforma o resto da URL em Array
         $args = (array)Request::getArgs();
@@ -101,16 +102,16 @@ class Router
     {
         if (!isset($_POST) OR count($_POST) == 0) {
             if (!method_exists($controller, $action))
-                Url::RedirectTo(self::ERROR_404,self::ERROR_CONTROLLER_ABV);
+                Url::RedirectTo(self::ERROR_404, self::ERROR_CONTROLLER_ABV);
 
             return null;
         }
 
         $addPost = PREFIX_POST;
-        if(!method_exists($controller, $action.$addPost)) {
+        if (!method_exists($controller, $action . $addPost)) {
             $addPost = null;
             if (!method_exists($controller, $action))
-                Url::RedirectTo(self::ERROR_404,self::ERROR_CONTROLLER_ABV);
+                Url::RedirectTo(self::ERROR_404, self::ERROR_CONTROLLER_ABV);
         }
 
         return $addPost;
@@ -120,28 +121,24 @@ class Router
      * Caso exista algum post na pagina, ele é tranformado em um objeto $model
      * e colocado como o primeiro argumento para receber no metodo do controller
      */
-    private static function  getPost(&$parameters){
-        if(isset($_POST) and count($_POST) > 0){
+    private static function getPost(&$parameters)
+    {
+        if (isset($_POST) and count($_POST) > 0) {
             $post = $_POST;
             $classe = Controller::getTypeModel();
 
             $model = new $classe();
-
-            foreach($post as $key => $valor):
+            foreach ($post as $key => $valor):
                 $ex = explode("_", $key);
                 $count = count($ex);
-                $result = '$model->';
-                for($i =0; $i < $count; $i++)
-                    $result .= '$ex[' . $i . ']' . ($i == $count - 1 ? '= $valor == "" ? null : $valor;' : '->');
-
-                eval($result);
+                $model->$key = $valor == "" ? null : $valor;
             endforeach;
 
             $arrayMerge = array("model" => $model);
 
-            if(isset($_FILES)) {
+            if (isset($_FILES)) {
                 foreach ($_FILES as $file => $args) {
-                    if(property_exists($model,$file))
+                    if (property_exists($model, $file))
                         $model->$file = $args;
                     else
                         $arrayMerge[$file] = $args;
@@ -150,7 +147,8 @@ class Router
 
             ModelState::TryValidationModel($model);
 
-            $parameters = array_merge($arrayMerge,$parameters);
+            $parameters = array_merge($arrayMerge, $parameters);
+
         }
 
         return $parameters;

@@ -79,16 +79,30 @@ class Html
     {
         $erros = ModelState::getErrors();
         if (count($erros) > 0):
-            $html = '<ul class="validate-summary">';
+            $html = '<div class="callout callout-danger"><ul class="validate-summary">';
 
             foreach ($erros as $erro) {
                 $html .= '<li>' . $erro . '</li>';
             }
 
-            $html .= '</ul>';
+            $html .= '</ul></div>';
 
             echo $html;
         endif;
+    }
+
+    static function WriteMessage()
+    {
+        $msg = ModelState::$message;
+        if ($msg != null):
+            $html = '<div class="callout callout-info"><ul class="validate-summary">';
+            $html .= '<li>' . $msg . '</li>';
+            $html .= '</ul></div>';
+
+            echo $html;
+        endif;
+
+        ModelState::clear();
     }
 
     /**
@@ -96,7 +110,7 @@ class Html
      */
     static function checkBox($name, $bit, $attr = array(), $val = true)
     {
-        if ($bit == "true" || $bit == 1)
+        if ($bit == 1 || $bit == true)
             $attr["checked"] = "true";
 
         $attr = array_merge(
@@ -183,6 +197,36 @@ class Html
         );
 
         self::input($name, $value, $attr);
+    }
+
+    static function openForm($type = "POST", $attr){
+        $html = "<form ";
+
+        $attr = array_merge(
+            array(
+                "method" => $type
+            ),
+            $attr
+        );
+
+        $html .= self::getAttributes($attr) . " >";
+
+        echo $html;
+    }
+
+    static function closeForm(){
+        echo "</form>";
+    }
+
+    static function submitButton($value, $attr = array()){
+        $attr = array_merge(
+            array(
+                "type" => "submit"
+            ),
+            $attr
+        );
+
+        self::input("", $value, $attr);
     }
 
     /**

@@ -50,7 +50,7 @@ class Layout
     public static function getTitle()
     {
         if(PREFIX_TITLE != '')
-            return PREFIX_TITLE . ' - ' . self::$title;
+            return  self::$title . ' | ' . PREFIX_TITLE;
         return self::$title;
     }
 

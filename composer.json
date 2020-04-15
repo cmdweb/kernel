@@ -4,7 +4,7 @@
   "authors": [
     {
       "name": "Gabriel Malaquias",
-      "email": "g@gmalaquias.com"
+      "email": "gemalaquias@gmail.com"
     }
   ],
   "keywords": ["framework", "alcatraz", "kernel"],
@@ -17,8 +17,9 @@
     },
 	"target-dir": "Alcatraz",
     "require": {
-      "alcatraz/config": "1.0.0",
-      "alcatraz/session": "1.0.0",
-      "alcatraz/modelstate": "1.0.0"
+      "alcatraz/config": "^1.1.0",
+      "alcatraz/session": "^1.1.0",
+      "alcatraz/modelstate": "^1.1.0",
+      "alcatraz/security": "^1.1.0"
     }
 }

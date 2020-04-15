@@ -8,6 +8,7 @@
 
 namespace Alcatraz\Kernel;
 use Alcatraz\Components\Session\Session;
+use Alcatraz\Security\Security;
 
 /**
  * Class Controller
@@ -21,6 +22,9 @@ class Controller
      */
     function __construct(){
         //Funcões de Restrições podem ser colocadas aqui
+        if(!Security::verifySession()):
+            Url::RedirectTo("","Login", "");
+        endif;
     }
 
     /**

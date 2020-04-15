@@ -94,7 +94,7 @@ class Request
      * @return string
      */
     public static function getAction(){
-        return ucfirst(self::$action);
+        return self::$action;
     }
 
     /**

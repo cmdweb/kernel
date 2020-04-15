@@ -8,26 +8,47 @@
  */
 namespace Alcatraz\Kernel;
 
+use Alcatraz\Annotation\Annotation;
 use Alcatraz\ModelState\ModelState;
-use \PDO;
+use PDO;
 
-class Database extends PDO
+class Database
 {
+    private $dbName;
+    private $dbHost;
+    private $dbUser;
+    private $dbType;
+
+    /**
+     * @var PDO
+     */
+    public static $instance;
+    private static $dbConnect;
+
     /**
      * Inicializa a conexão com o banco de dados
      * @access public
      * @return void
      */
-    public function __construct($DB_TYPE = DB_TYPE, $DB_HOST = DB_HOST, $DB_NAME = DB_NAME, $DB_USER = DB_USER, $DB_PASS = DB_PASS)
+    public function __construct($DB_NAME = DB_NAME, $DB_HOST = DB_HOST, $DB_USER = DB_USER, $DB_PASS = DB_PASS, $DB_TYPE = DB_TYPE, $DB_CHARSET = DB_CHARSET)
     {
+        $this->dbName = $DB_NAME;
+        $this->dbHost = $DB_HOST;
+        $this->dbUser = $DB_USER;
+        $this->dbType = $DB_TYPE;
+
         $options = array(
             PDO::ATTR_PERSISTENT => true,
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ,
+            PDO::ATTR_AUTOCOMMIT => false
         );
         // Executa o construtor da da classe pai (PDO) que inicializa a conex�o
         try {
-            parent::__construct($DB_TYPE . ':host=' . $DB_HOST . ';dbname=' . $DB_NAME . ';charset=utf8', $DB_USER, $DB_PASS, $options);
+            if(self::$instance == null || self::$dbConnect != $DB_NAME) {
+                self::$instance = new PDO($DB_TYPE . ':host=' . $DB_HOST . ';dbname=' . $DB_NAME . ';charset=' . $DB_CHARSET, $DB_USER, $DB_PASS, $options);
+                self::$dbConnect = $DB_NAME;
+            }
         } catch (PDOException $e) {
             echo $e->getMessage();
         }
@@ -44,15 +65,16 @@ class Database extends PDO
     public function select($sql, $class = "", $all = FALSE, $array = array())
     {
         // Prepara a Query
-        $sth = $this->prepare($sql);
+        $sth = self::$instance->prepare($sql);
 
         // Define os dados do Where, se existirem.
+        $i = 1;
         foreach ($array as $key => $value) {
             // Se o tipo do dado for inteiro, usa PDO::PARAM_INT, caso contr�rio, PDO::PARAM_STR
             $tipo = (is_int($value)) ? PDO::PARAM_INT : PDO::PARAM_STR;
 
             // Define o dado
-            $sth->bindValue("$key", $value, $tipo);
+            $sth->bindValue($i++, $value, $tipo);
         }
 
         // Executa
@@ -104,35 +126,35 @@ class Database extends PDO
      */
     public function ExecuteInsert($table, $data)
     {
-            if (is_object($data))
-                ModelState::ModelTreatment($data);
+        if (is_object($data))
+            ModelState::ModelTreatment($data);
 
-            $data = (array)$data;
+        $data = (array)$data;
 
-            // Ordena
-            ksort($data);
+        // Ordena
+        ksort($data);
 
-            // Campos e valores
-            $camposNomes = implode('`, `', array_keys($data));
-            $camposValores = ':' . implode(', :', array_keys($data));
+        // Campos e valores
+        $camposNomes = implode('`, `', array_keys($data));
+        $camposValores = ':' . implode(', :', array_keys($data));
 
-            // Prepara a Query
-            $sth = $this->prepare("INSERT INTO $table (`$camposNomes`) VALUES ($camposValores)");
+        // Prepara a Query
+        $sth = self::$instance->prepare("INSERT INTO $table (`$camposNomes`) VALUES ($camposValores)");
 
-            // Define os dados
-            foreach ($data as $key => $value) {
-                // Se o tipo do dado for inteiro, usa PDO::PARAM_INT, caso contr�rio, PDO::PARAM_STR
-                $tipo = (is_int($value)) ? PDO::PARAM_INT : PDO::PARAM_STR;
+        // Define os dados
+        foreach ($data as $key => $value) {
+            // Se o tipo do dado for inteiro, usa PDO::PARAM_INT, caso contr�rio, PDO::PARAM_STR
+            $tipo = (is_int($value)) ? PDO::PARAM_INT : PDO::PARAM_STR;
 
-                // Define o dado
-                $sth->bindValue(":$key", $value, $tipo);
-            }
+            // Define o dado
+            $sth->bindValue(":$key", $value, $tipo);
+        }
 
-            // Executa
-            $sth->execute();
+        // Executa
+        $sth->execute();
 
-            // Retorna o ID desse item inserido
-            return $this->lastInsertId();
+        // Retorna o ID desse item inserido
+        return self::$instance->lastInsertId();
     }
 
     /**
@@ -161,7 +183,7 @@ class Database extends PDO
         $novosDados = rtrim($novosDados, ',');
 
         // Prepara a Query
-        $sth = $this->prepare("UPDATE $table SET $novosDados WHERE $where");
+        $sth = self::$instance->prepare("UPDATE $table SET $novosDados WHERE $where");
 
         // Define os dados
         foreach ($data as $key => $value) {
@@ -171,6 +193,22 @@ class Database extends PDO
             // Define o dado
             $sth->bindValue(":$key", $value, $tipo);
         }
+
+        // Sucesso ou falha?
+        return $sth->execute();
+    }
+
+    public function executeSingleQuery($fist, $table, $last){
+
+        $table_aux = (class_exists(NAMESPACE_ENTITIES . $table) ? NAMESPACE_ENTITIES . $table : null);
+        if($table_aux != null){
+            $ann = new Annotation($table_aux);
+            $table = $ann->getTableName();
+        }
+
+        $query = $fist . " " . $table . " " . $last;
+
+        $sth = self::$instance->prepare($query);
 
         // Sucesso ou falha?
         return $sth->execute();
@@ -186,7 +224,48 @@ class Database extends PDO
     public function deleteExecute($table, $where, $limit = 1)
     {
         // Deleta
-        return $this->exec("DELETE FROM $table WHERE $where LIMIT $limit");
+        $table_aux = (class_exists(NAMESPACE_ENTITIES . $table) ? NAMESPACE_ENTITIES . $table : null);
+        if($table_aux != null){
+            $ann = new Annotation($table_aux);
+            $table = $ann->getTableName();
+        }
+
+        if($limit == 0)
+            return self::$instance->exec("DELETE FROM $table WHERE $where");
+        else
+            return self::$instance->exec("DELETE FROM $table WHERE $where LIMIT $limit");
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getDbName()
+    {
+        return $this->dbName;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getDbHost()
+    {
+        return $this->dbHost;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getDbUser()
+    {
+        return $this->dbUser;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getDbType()
+    {
+        return $this->dbType;
     }
 
 }
