@@ -21,10 +21,11 @@ class Controller
      * metodo chamado sempre antes de exibir as paginas
      */
     function __construct(){
-        //Funcões de Restrições podem ser colocadas aqui
-        if(!Security::verifySession()):
-            Url::RedirectTo("","Login", "");
-        endif;
+        if(!defined("ENABLE_SECURITY"))
+            return;
+
+        if (!Security::verifySession())
+            Url::RedirectTo("", "Login", "");
     }
 
     /**
