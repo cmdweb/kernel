@@ -8,7 +8,6 @@
 
 namespace Alcatraz\Kernel;
 use Alcatraz\Components\Session\Session;
-use Alcatraz\Security\Security;
 
 /**
  * Class Controller
@@ -24,8 +23,7 @@ class Controller
         if(!defined("ENABLE_SECURITY") || ENABLE_SECURITY === false)
             return;
 
-        if (!Security::verifySession())
-            Url::RedirectTo("", "Login", "");
+        Security::executeSecutiryFunction();
     }
 
     /**
